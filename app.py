@@ -130,16 +130,17 @@ with tabs[2]:
 # 🖨️ Export
 with tabs[3]:
     if "df_filtered" in locals():
-        buffer = io.BytesIO()
-        df_filtered.to_excel(buffer, index=False)
-        buffer.seek(0)
-        st.download_button("⬇️ Download Excel Mapping Table", data=buffer, file_name="mapping_results.xlsx")
+        # Excel export
+        excel_buffer = io.BytesIO()
+        df_filtered.to_excel(excel_buffer, index=False)
+        excel_buffer.seek(0)
+        st.download_button("⬇️ Download Excel Mapping Table", data=excel_buffer, file_name="mapping_results.xlsx")
 
-        if st.button("⬇️ Download PDF Mapping Report"):
-            pdf_buffer = generate_pdf(summary_df, coverage)
-            st.download_button(
-                label="📄 Download PDF Mapping Report",
-                data=pdf_buffer,
-                file_name=f"mapping_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf",
-                mime="application/pdf"
-            )
+        # PDF export direct
+        pdf_bytes = generate_pdf(summary_df, coverage)
+        st.download_button(
+            label="📄 Download PDF Mapping Report",
+            data=pdf_bytes,
+            file_name=f"mapping_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf",
+            mime="application/pdf"
+        )
