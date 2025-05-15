@@ -1,0 +1,11 @@
+streamlit
+pandas
+numpy
+openpyxl
+sentence-transformers
+scikit-learn
+matplotlib
+seaborn
+requests
+reportlab
+huggingface_hub[hf_xet]
