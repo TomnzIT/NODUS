@@ -12,8 +12,8 @@ services:
     restart: unless-stopped
 
   streamlit-app:
-    image: cybermap:latest
-    container_name: streamlit-cybermap
+    image: nodus:latest
+    container_name: streamlit-nodus
     ports:
       - "8501:8501"
     environment:
