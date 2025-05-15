@@ -4,6 +4,9 @@ import requests
 # URL de l'API Ollama (par défaut sur le service docker 'ollama')
 OLLAMA_URL = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
 
+if "localhost" in os.environ.get("DEV_MODE", ""):
+    OLLAMA_URL = "http://localhost:11434"
+
 def generate_justification_llm(source_req, target_reqs, model="mistral"):
     prompt = (
         "Given the following source cybersecurity control and a set of target controls, "
