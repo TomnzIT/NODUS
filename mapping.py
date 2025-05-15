@@ -4,6 +4,7 @@ import streamlit as st
 from sentence_transformers import SentenceTransformer, util
 from llm_utils import generate_justification_llm
 
+# Seuils de similarité pour les matchs
 SIMILARITY_THRESHOLDS = {
     "full": 0.85,
     "partial": 0.65
@@ -13,22 +14,28 @@ MODEL_NAME = 'all-MiniLM-L6-v2'
 
 @st.cache_resource
 def load_model():
+    """Charge le modèle BERT (caché entre les redémarrages)"""
     return SentenceTransformer(MODEL_NAME)
 
 @st.cache_resource
 def encode_controls(texts):
+    """Encode une liste de textes en vecteurs BERT"""
     model = load_model()
     return model.encode(texts, convert_to_tensor=True)
 
 def load_controls(file):
+    """Charge et valide un fichier Excel de contrôles"""
     df = pd.read_excel(file)
     df.columns = [col.strip().lower() for col in df.columns]
     required = {'control_id', 'control_category', 'control_subcategory', 'control_requirement'}
     if not required.issubset(df.columns):
         raise ValueError("Excel must contain columns: control_id, control_category, control_subcategory, control_requirement")
-    return df.dropna(subset=['control_id', 'control_requirement']).drop_duplicates(subset='control_id')
+    df = df.dropna(subset=['control_id', 'control_requirement']).drop_duplicates(subset='control_id')
+    df = df[df['control_requirement'].str.len() > 3]  # Ignore les exigences vides ou trop courtes
+    return df
 
 def compute_similarity_matrix(df_source, df_target):
+    """Calcule la matrice de similarité cosine entre contrôles source et cible"""
     src_texts = df_source['control_requirement'].fillna('').astype(str).tolist()
     tgt_texts = df_target['control_requirement'].fillna('').astype(str).tolist()
     src_emb = encode_controls(src_texts)
@@ -36,6 +43,7 @@ def compute_similarity_matrix(df_source, df_target):
     return util.cos_sim(src_emb, tgt_emb).cpu().numpy()
 
 def map_controls(df_source, df_target, thresholds=SIMILARITY_THRESHOLDS):
+    """Effectue le mapping automatique des exigences"""
     sim_matrix = compute_similarity_matrix(df_source, df_target)
     mapping_results = []
     match_type_counter = {"Full Match": 0, "Partial Match": 0, "No Match": 0}
@@ -80,6 +88,7 @@ def map_controls(df_source, df_target, thresholds=SIMILARITY_THRESHOLDS):
     return pd.DataFrame(mapping_results), round(coverage, 2), match_type_counter, sim_matrix
 
 def summarize_by_category(df_mapping, df_ref):
+    """Regroupe les résultats par catégorie pour résumé visuel"""
     categories = df_ref[['control_id', 'control_category']].dropna().astype(str).set_index('control_id')
     df = df_mapping.copy()
     df['control_id'] = df['Source - Control ID']

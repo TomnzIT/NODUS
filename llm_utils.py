@@ -1,29 +1,33 @@
+import os
 import requests
 
-def generate_justification_llm(source_req, target_reqs, model="mistral", api_url="http://ollama:11434/api/generate"):
+# URL de l'API Ollama (par défaut sur le service docker 'ollama')
+OLLAMA_URL = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
+
+def generate_justification_llm(source_req, target_reqs, model="mistral"):
     prompt = (
         "Given the following source cybersecurity control and a set of target controls, "
-        "explain why they are conceptually aligned. Then, identify what is missing or different in the target controls "
-        "compared to the source control (gap analysis). Be concise, clear, and professional.\n\n"
+        "briefly explain why they are conceptually aligned. Identify any notable gaps as well.\n\n"
         f"Source Control:\n{str(source_req)}\n\n"
         "Target Controls:\n" +
         "\n".join([f"- {str(t)}" for t in target_reqs]) +
-        "\n\nJustification and Gap Analysis:"
+        "\n\nJustification and Gap:"
     )
 
+    headers = {"Content-Type": "application/json"}
+
     try:
+        # Affiche dans les logs Docker que la requête est envoyée
+        print(f"[LLM] Sending prompt to {OLLAMA_URL}")
+
         response = requests.post(
-            api_url,
+            f"{OLLAMA_URL}/api/generate",
             json={"model": model, "prompt": prompt, "stream": False},
-            timeout=15
+            headers=headers,
+            timeout=30
         )
         response.raise_for_status()
-        data = response.json()
-        if "response" not in data:
-            return "LLM Error: No 'response' field in LLM reply."
-        return data["response"].strip()
+        return response.json().get("response", "").strip()
 
-    except requests.exceptions.RequestException as e:
-        return f"LLM Network Error: {e}"
     except Exception as e:
-        return f"LLM Internal Error: {e}"
+        return f"LLM Network Error: {e}"

@@ -12,7 +12,7 @@ services:
     restart: unless-stopped
 
   nodus-app:
-    image: nodus:latest
+    build: .
     container_name: nodus-app
     ports:
       - "8501:8501"

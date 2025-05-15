@@ -1,11 +1,22 @@
+# UI
 streamlit
+
+# Data processing
 pandas
 numpy
 openpyxl
+
+# Machine learning / NLP
 sentence-transformers
 scikit-learn
+
+# Visualization
 matplotlib
 seaborn
-requests
+
+# PDF export
 reportlab
+
+# HTTP & model download
+requests
 huggingface_hub[hf_xet]

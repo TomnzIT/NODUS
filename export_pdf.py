@@ -7,8 +7,16 @@ from datetime import datetime
 import io
 
 def generate_pdf(summary, coverage):
+    """Génère un PDF résumant la couverture et les correspondances par catégorie"""
     buffer = io.BytesIO()
-    doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=2*cm, leftMargin=2*cm, topMargin=2*cm, bottomMargin=2*cm)
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=A4,
+        rightMargin=2 * cm,
+        leftMargin=2 * cm,
+        topMargin=2 * cm,
+        bottomMargin=2 * cm
+    )
 
     styles = getSampleStyleSheet()
     style_title = styles["Heading1"]
