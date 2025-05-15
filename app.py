@@ -74,7 +74,7 @@ with tabs[1]:
 
             categories = df_source['control_category'].dropna().unique().tolist()
             selected_categories = st.multiselect("📂 Filter by Category", categories, default=categories)
-            search_text = st.text_input("🔍 Search requirements")
+            search_text = st.text_input("🔍 Search requirements").strip().lower()
 
             def get_category(control_id):
                 row = df_source[df_source['control_id'] == control_id]
@@ -83,7 +83,12 @@ with tabs[1]:
             df_mapping['__category'] = df_mapping['Source - Control ID'].map(get_category)
             df_filtered = df_mapping[df_mapping['__category'].isin(selected_categories)]
             if search_text:
-                df_filtered = df_filtered[df_filtered['Source - Requirement'].str.lower().str.contains(search_text.lower())]
+                if search_text:
+                    df_filtered = df_filtered[df_filtered['Source - Requirement']
+                        .fillna("")
+                        .str.lower()
+                        .str.contains(search_text, na=False)
+                    ]
             df_filtered.drop(columns="__category", inplace=True)
 
             st.subheader("📋 Mapping Results")
