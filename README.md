@@ -28,8 +28,8 @@ This application automatically maps and compares two cybersecurity frameworks (e
 
 1. Clone the repository:
 
-   git clone https://github.com/TomnzIT/NODUS.git
-   cd NODUS
+   git clone https://github.com/yourusername/cyber-mapping-app.git  
+   cd cyber-mapping-app
 
 2. Start Ollama and pull the LLM model:
 

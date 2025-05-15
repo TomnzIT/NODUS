@@ -1,6 +1,6 @@
 import requests
 
-def generate_justification_llm(source_req, target_reqs, model="mistral", api_url="http://localhost:11434/api/generate"):
+def generate_justification_llm(source_req, target_reqs, model="mistral", api_url="http://ollama:11434/api/generate"):
     prompt = (
         "Given the following source cybersecurity control and a set of target controls, "
         "explain why they are conceptually aligned. Then, identify what is missing or different in the target controls "
