@@ -1,4 +1,4 @@
-# 🛡️ Cybersecurity Control Mapping Tool
+# 🛡️ NODUS
 
 This application automatically maps and compares two cybersecurity frameworks (e.g. ISO 27002, TISAX, NIST...) using AI. It assesses coverage between controls and generates gap justifications using a local LLM model (Mistral via Ollama).
 
