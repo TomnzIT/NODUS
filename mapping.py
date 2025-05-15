@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
+import streamlit as st
 from sentence_transformers import SentenceTransformer, util
 from llm_utils import generate_justification_llm
-import streamlit as st
 
 SIMILARITY_THRESHOLDS = {
     "full": 0.85,
@@ -16,7 +16,8 @@ def load_model():
     return SentenceTransformer(MODEL_NAME)
 
 @st.cache_resource
-def encode_controls(model, texts):
+def encode_controls(texts):
+    model = load_model()
     return model.encode(texts, convert_to_tensor=True)
 
 def load_controls(file):
@@ -28,9 +29,10 @@ def load_controls(file):
     return df.dropna(subset=['control_id', 'control_requirement']).drop_duplicates(subset='control_id')
 
 def compute_similarity_matrix(df_source, df_target):
-    model = load_model()
-    src_emb = encode_controls(model, df_source['control_requirement'].fillna('').astype(str).tolist())
-    tgt_emb = encode_controls(model, df_target['control_requirement'].fillna('').astype(str).tolist())
+    src_texts = df_source['control_requirement'].fillna('').astype(str).tolist()
+    tgt_texts = df_target['control_requirement'].fillna('').astype(str).tolist()
+    src_emb = encode_controls(src_texts)
+    tgt_emb = encode_controls(tgt_texts)
     return util.cos_sim(src_emb, tgt_emb).cpu().numpy()
 
 def map_controls(df_source, df_target, thresholds=SIMILARITY_THRESHOLDS):
