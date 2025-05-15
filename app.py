@@ -8,9 +8,9 @@ from mapping import load_controls, map_controls, summarize_by_category
 from export_pdf import generate_pdf
 from llm_utils import generate_justification_llm
 
-st.set_page_config(page_title="Cybersecurity Mapping Tool", layout="wide")
+st.set_page_config(page_title="NODUS - Framework Mapping", layout="wide")
 
-st.title("🛡️ Cybersecurity Control Mapping Tool")
+st.title("🧠 NODUS – Cybersecurity Framework Intelligence")
 
 with st.sidebar:
     st.markdown("## ⚙️ Matching Settings")

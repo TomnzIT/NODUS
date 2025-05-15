@@ -11,9 +11,9 @@ services:
     command: "ollama serve"
     restart: unless-stopped
 
-  streamlit-app:
+  nodus-app:
     image: nodus:latest
-    container_name: streamlit-nodus
+    container_name: nodus-app
     ports:
       - "8501:8501"
     environment:
